@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -14,11 +14,9 @@ import { Colors } from '../constants/Colors';
 import { HeartbeatAnimation } from '../animation/HeartbeatAnimation';
 
 const PulsatingButton = ({ onPress, title }) => {
-  useEffect(() => {
-    HeartbeatAnimation(pulsatiionAnim, 0.2, 0.3);
-  }, []);
+  const pulsationValue = useRef(new Animated.Value(0.25)).current;
 
-  const pulsatiionAnim = useRef(new Animated.Value(0.25)).current;
+  HeartbeatAnimation(pulsationValue, 0.2, 0.25);
 
   const [isPressed, setIsPressed] = useState(false);
 
@@ -46,8 +44,8 @@ const PulsatingButton = ({ onPress, title }) => {
         <Animated.View
           style={[
             {
-              height: width * pulsatiionAnim,
-              width: width * pulsatiionAnim,
+              height: width * pulsationValue,
+              width: width * pulsationValue,
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: width,
