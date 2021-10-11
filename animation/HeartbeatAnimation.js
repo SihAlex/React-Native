@@ -6,18 +6,22 @@ export const HeartbeatAnimation = (value, minValue, maxValue) =>
       Animated.timing(value, {
         toValue: maxValue,
         duration: 100,
+        useNativeDriver: true,
       }),
       Animated.timing(value, {
         toValue: minValue,
         duration: 100,
+        useNativeDriver: true,
       }),
       Animated.timing(value, {
         toValue: maxValue,
         duration: 100,
+        useNativeDriver: true,
       }),
       Animated.timing(value, {
         toValue: minValue,
         duration: 2000,
+        useNativeDriver: true,
       }),
     ])
   );

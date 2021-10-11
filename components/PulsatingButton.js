@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,19 @@ import {
   Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
+  Animated,
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 
+import { HeartbeatAnimation } from '../animation/HeartbeatAnimation';
+
 const PulsatingButton = ({ onPress, title }) => {
+  useEffect(() => {
+    HeartbeatAnimation(pulsatiionAnim, 0.2, 0.3);
+  }, []);
+
+  const pulsatiionAnim = useRef(new Animated.Value(0.25)).current;
+
   const [isPressed, setIsPressed] = useState(false);
 
   const onPressHandler = () => {
@@ -34,9 +43,20 @@ const PulsatingButton = ({ onPress, title }) => {
         onPressIn={onPressHandler}
         onPressOut={onStopPressHandler}
       >
-        <View style={isPressed ? styles.buttonPressed : styles.button}>
+        <Animated.View
+          style={[
+            {
+              height: width * pulsatiionAnim,
+              width: width * pulsatiionAnim,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: width,
+            },
+            isPressed ? styles.buttonPressed : styles.button,
+          ]}
+        >
           <Text style={styles.buttonText}>{title}</Text>
-        </View>
+        </Animated.View>
       </TouchableComponent>
     </View>
   );
@@ -50,20 +70,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   button: {
-    height: width * 0.25,
-    width: width * 0.25,
     backgroundColor: Colors.primary,
-    borderRadius: width,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttonPressed: {
-    height: width * 0.25,
-    width: width * 0.25,
     backgroundColor: Colors.secondary,
-    borderRadius: width,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttonText: {
     color: 'white',

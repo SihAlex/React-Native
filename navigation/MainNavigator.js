@@ -8,6 +8,11 @@ import NoteContentScreen from '../screens/NoteContentScreen';
 
 import { Colors } from '../constants/Colors';
 
+export const SCREENS = {
+  CreateNoteScreen: 'CreateNote',
+  NoteContentScreen: 'Note Content',
+};
+
 const Stack = createNativeStackNavigator();
 
 function MainNavigator() {
@@ -26,12 +31,12 @@ function MainNavigator() {
         <Stack.Screen
           name="CreateNote"
           component={CreateNoteScreen}
-          options={{
-            title: 'Create Note',
+          options={({ route }) => ({
+            title: route.params ? 'Edit Note' : 'Create Note',
             headerStyle: {
               backgroundColor: Colors.secondary,
             },
-          }}
+          })}
         />
         <Stack.Screen
           name="Note Content"

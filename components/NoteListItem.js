@@ -1,11 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from 'react-native-popup-menu';
+
 import {
   View,
   Text,
@@ -14,12 +8,11 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
 } from 'react-native';
-import { Colors } from '../constants/Colors';
 
-const NoteListItem = ({ id, title, date, onPress }) => {
-  const dispatch = useDispatch();
+import MenuComponent from './MenuComponent';
 
-  const longPressHandler = () => {};
+const NoteListItem = (props) => {
+  const { title, date, onPress, onEdit, onDelete } = props;
 
   let TouchableComponent = TouchableOpacity;
 
@@ -28,23 +21,13 @@ const NoteListItem = ({ id, title, date, onPress }) => {
   }
 
   return (
-    <TouchableComponent onPress={onPress} onLongPress={longPressHandler}>
+    <TouchableComponent onPress={onPress}>
       <View style={styles.note}>
-        <Text style={styles.text}>{title}</Text>
+        <Text style={styles.text} numberOfLines={1}>
+          {title}
+        </Text>
         <Text style={styles.text}>{date}</Text>
-        <Menu onSelect={(value) => alert(`Selected number: ${value}`)}>
-          <MenuTrigger>
-            <Text style={{ color: Colors.primary }}>More</Text>
-          </MenuTrigger>
-          <MenuOptions>
-            <MenuOption value={1}>
-              <Text style={{ color: Colors.secondary }}>Edit</Text>
-            </MenuOption>
-            <MenuOption value={2}>
-              <Text style={{ color: Colors.error }}>Delete</Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
+        <MenuComponent onEdit={onEdit} onDelete={onDelete} />
       </View>
     </TouchableComponent>
   );
@@ -55,10 +38,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingLeft: 10,
   },
   text: {
     color: 'black',
+    overflow: 'hidden',
+    width: '30%',
   },
 });
 

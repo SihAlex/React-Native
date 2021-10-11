@@ -1,8 +1,9 @@
 import React, { useReducer, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import * as notesActions from '../store/notes-actions';
-import { Button, StyleSheet, Text, TextInput, ScrollView } from 'react-native';
+import { Button, StyleSheet, Text, TextInput } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const CHANGE_TITLE = 'CHANGE_TITLE';
 const CHANGE_CONTENT = 'CHANGE_CONTENT';
@@ -16,7 +17,7 @@ const formReducer = (state, action) => {
         ...state,
         title: {
           text: action.text,
-          validity: action.text.length > 0,
+          validity: action.text.trim().length > 0,
         },
       };
     case CHANGE_CONTENT:
@@ -24,7 +25,7 @@ const formReducer = (state, action) => {
         ...state,
         content: {
           text: action.text,
-          validity: action.text.length > 0,
+          validity: action.text.trim().length > 0,
         },
       };
     case TOUCH_TITLE:
@@ -51,12 +52,21 @@ const initialState = {
     text: '',
     validity: false,
   },
-  isTitleTouched: false,
-  isContentTouched: false,
 };
 
 const CreateNoteScreen = (props) => {
-  const [state, dispatchFormAction] = useReducer(formReducer, initialState);
+  const { id, title, content } = props.route.params || {
+    ...initialState,
+    id: null,
+  };
+
+  const [state, dispatchFormAction] = useReducer(formReducer, {
+    id,
+    title,
+    content,
+    isTitleTouched: false,
+    isContentTouched: false,
+  });
 
   const dispatch = useDispatch();
 
@@ -74,12 +84,22 @@ const CreateNoteScreen = (props) => {
   };
   const submitHandler = () => {
     if (state.title.validity && state.content.validity) {
-      dispatch(
-        notesActions.createNote({
-          title: state.title.text,
-          content: state.content.text,
-        })
-      );
+      if (id) {
+        dispatch(
+          notesActions.editNote({
+            id: state.id,
+            title: state.title.text,
+            content: state.content.text,
+          })
+        );
+      } else {
+        dispatch(
+          notesActions.createNote({
+            title: state.title.text,
+            content: state.content.text,
+          })
+        );
+      }
       props.navigation.goBack();
     }
   };
@@ -92,7 +112,12 @@ const CreateNoteScreen = (props) => {
   }, []);
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" style={styles.screen}>
+    <KeyboardAwareScrollView
+      keyboardShouldPersistTaps="handled"
+      style={styles.screen}
+      enableOnAndroid
+      extraScrollHeight={30}
+    >
       <Text style={styles.inputLabel}>Title:</Text>
       <TextInput
         style={
@@ -123,7 +148,7 @@ const CreateNoteScreen = (props) => {
         onBlur={onContentBlurHandler}
       />
       <Button title="OK" color={Colors.secondary} onPress={submitHandler} />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 
